@@ -4,7 +4,7 @@
   "description": "A set of actions for autograding assignments with GitHub Classroom",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc --noEmit && ncc build src/autograding.ts -o dist -m",
+    "build": "tsc --noEmit && ncc build src/autograding.ts -o dist",
     "test": "tsc --noEmit && jest",
     "lint": "eslint . --ext .ts"
   },

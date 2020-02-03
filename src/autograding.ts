@@ -43,6 +43,9 @@ const run = async (): Promise<void> => {
   }
 }
 
-// run()
+// Don't auto-execute in the test environment
+if (process.env['NODE_ENV'] !== 'test') {
+  run()
+}
 
 export default run
