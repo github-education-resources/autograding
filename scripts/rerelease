@@ -16,3 +16,5 @@ git push origin :refs/tags/v1
 git tag -fa v1 -m "v1"
 # Push everything
 git push origin v1
+# Checkout master again
+git checkout master
