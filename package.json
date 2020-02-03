@@ -1,0 +1,39 @@
+{
+  "name": "autograding",
+  "version": "1.0.0",
+  "description": "A set of actions for autograding assignments with GitHub Classroom",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc --noEmit && ncc build src/autograding.ts -o dist -m",
+    "test": "tsc --noEmit && jest",
+    "lint": "eslint . --ext .ts"
+  },
+  "keywords": [
+    "github",
+    "education",
+    "classroom",
+    "autograding"
+  ],
+  "author": "GitHub",
+  "license": "ISC",
+  "dependencies": {
+    "@actions/core": "^1.2.2",
+    "@actions/github": "^2.1.0",
+    "tree-kill": "^1.2.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.1.1",
+    "@types/node": "^13.5.3",
+    "@typescript-eslint/eslint-plugin": "^2.18.0",
+    "@typescript-eslint/parser": "^2.18.0",
+    "@zeit/ncc": "^0.21.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "jest": "^25.1.0",
+    "nock": "^11.7.2",
+    "prettier": "^1.19.1",
+    "ts-jest": "^25.1.0",
+    "typescript": "^3.7.5"
+  }
+}

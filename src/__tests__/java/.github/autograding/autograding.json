@@ -1,0 +1,11 @@
+{
+  "tests": [
+    {
+      "name": "Hello Test",
+      "setup": "javac *.java",
+      "run": "java -cp . Hello",
+      "input": "Jeff",
+      "output": "Hello Jeff"
+    }
+  ]
+}
