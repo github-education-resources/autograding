@@ -129,7 +129,7 @@ export const run = async (test: Test, cwd: string): Promise<void> => {
 }
 
 export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => {
-  await tests.forEach(async test => {
+  for (const test of tests) {
     try {
       console.log(`Running ${test.name}`)
       await run(test, cwd)
@@ -137,5 +137,5 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
     } catch (error) {
       core.setFailed(error.message)
     }
-  })
+  }
 }
