@@ -31,7 +31,7 @@ const run = async (): Promise<void> => {
     }
 
     console.log('Reading autograding test configuration')
-    const data = fs.readFileSync(path.resolve(cwd, '.github/autograding/autograding.json'))
+    const data = fs.readFileSync(path.resolve(cwd, '.github/classroom/autograding.json'))
     const json = JSON.parse(data.toString())
 
     console.log('Running tests')
