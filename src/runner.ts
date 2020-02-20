@@ -42,7 +42,7 @@ export class TestOutputError extends TestError {
 }
 
 const normalizeLineEndings = (text: string): string => {
-  return text.replace(/\r\n/gi, '\n')
+  return text.replace(/\r\n/gi, '\n').trim()
 }
 
 const waitForExit = async (child: ChildProcess, timeout: number): Promise<void> => {
