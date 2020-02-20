@@ -2,12 +2,16 @@ import {spawn, ChildProcess} from 'child_process'
 import kill from 'tree-kill'
 import * as core from '@actions/core'
 
+export type TestComparison = 'exact' | 'included' | 'regex'
+
 export interface Test {
   readonly name: string
   readonly setup: string
   readonly run: string
   readonly input: string
   readonly output: string
+  readonly timeout: number
+  readonly comparison: TestComparison
 }
 
 export class TestError extends Error {
@@ -81,7 +85,7 @@ const waitForExit = async (child: ChildProcess, timeout: number): Promise<void> 
   })
 }
 
-const runSetup = async (test: Test, cwd: string): Promise<void> => {
+const runSetup = async (test: Test, cwd: string, timeout: number): Promise<void> => {
   if (!test.setup || test.setup === '') {
     return
   }
@@ -91,10 +95,10 @@ const runSetup = async (test: Test, cwd: string): Promise<void> => {
     shell: true,
   })
 
-  await waitForExit(setup, 5000)
+  await waitForExit(setup, timeout)
 }
 
-const runCommand = async (test: Test, cwd: string): Promise<void> => {
+const runCommand = async (test: Test, cwd: string, timeout: number): Promise<void> => {
   const child = spawn(test.run, {
     cwd,
     shell: true,
@@ -112,7 +116,7 @@ const runCommand = async (test: Test, cwd: string): Promise<void> => {
     child.stdin.end()
   }
 
-  await waitForExit(child, 5000)
+  await waitForExit(child, timeout)
 
   // TODO: handle comparison modes
   //   - includes
@@ -124,8 +128,14 @@ const runCommand = async (test: Test, cwd: string): Promise<void> => {
 }
 
 export const run = async (test: Test, cwd: string): Promise<void> => {
-  await runSetup(test, cwd)
-  await runCommand(test, cwd)
+  // Timeouts are delivered in minutes, but need to be in ms
+  let timeout = test.timeout * 60 * 1000 || 30000
+  const start = process.hrtime()
+  await runSetup(test, cwd, timeout)
+  const elapsed = process.hrtime(start)
+  // Subtract the elapsed seconds (0) and nanoseconds (1) to find the remaining timeout
+  timeout -= Math.floor(elapsed[0] * 1000 + elapsed[1] / 1000000)
+  await runCommand(test, cwd, timeout)
 }
 
 export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => {

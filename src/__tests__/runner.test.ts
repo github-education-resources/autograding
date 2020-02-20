@@ -1,5 +1,5 @@
 import path from 'path'
-import {run} from '../runner'
+import {run, TestComparison} from '../runner'
 
 beforeEach(() => {
   // resetModules allows you to safely change the environment and mock imports
@@ -18,6 +18,8 @@ describe('runner', () => {
       run: 'java -cp . Hello',
       input: 'Jeff',
       output: 'Hello Jeff',
+      comparison: 'included' as TestComparison,
+      timeout: 5000,
     }
 
     await expect(run(test, cwd)).resolves.not.toThrow()
