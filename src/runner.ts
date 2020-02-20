@@ -122,13 +122,14 @@ const runCommand = async (test: Test, cwd: string, timeout: number): Promise<voi
         throw new TestOutputError(`The output for test ${test.name} did not match`, test.output, output)
       }
       break
-    case 'included':
-      if (!output.includes(test.output)) {
+    case 'regex':
+      if (!output.match(new RegExp(test.output))) {
         throw new TestOutputError(`The output for test ${test.name} did not match`, test.output, output)
       }
       break
-    case 'regex':
-      if (!output.match(new RegExp(test.output))) {
+    default:
+      // The default comparison mode is 'included'
+      if (!output.includes(test.output)) {
         throw new TestOutputError(`The output for test ${test.name} did not match`, test.output, output)
       }
       break
@@ -136,8 +137,8 @@ const runCommand = async (test: Test, cwd: string, timeout: number): Promise<voi
 }
 
 export const run = async (test: Test, cwd: string): Promise<void> => {
-  // Timeouts are delivered in minutes, but need to be in ms
-  let timeout = test.timeout * 60 * 1000 || 30000
+  // Timeouts are in minutes, but need to be in ms
+  let timeout = (test.timeout || 1) * 60 * 1000 || 30000
   const start = process.hrtime()
   await runSetup(test, cwd, timeout)
   const elapsed = process.hrtime(start)
