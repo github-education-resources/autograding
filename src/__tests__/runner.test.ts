@@ -19,7 +19,7 @@ describe('runner', () => {
       input: 'Jeff',
       output: 'Hello Jeff',
       comparison: 'included' as TestComparison,
-      timeout: 5000,
+      timeout: 1,
     }
 
     await expect(run(test, cwd)).resolves.not.toThrow()
@@ -34,7 +34,7 @@ describe('runner', () => {
       input: 'Jeff',
       output: 'Jeff',
       comparison: 'regex' as TestComparison,
-      timeout: 5000,
+      timeout: 1,
     }
 
     await expect(run(test, cwd)).resolves.not.toThrow()
@@ -49,7 +49,7 @@ describe('runner', () => {
       input: 'Jeff',
       output: 'What is your name?\nHello Jeff\n\n',
       comparison: 'exact' as TestComparison,
-      timeout: 5000,
+      timeout: 1,
     }
 
     await expect(run(test, cwd)).resolves.not.toThrow()
@@ -64,9 +64,24 @@ describe('runner', () => {
       input: 'Jeff',
       output: 'Hello Mike',
       comparison: 'included' as TestComparison,
-      timeout: 5000,
+      timeout: 1,
     }
 
     await expect(run(test, cwd)).rejects.toThrow('The output for test Hello Test did not match')
+  }, 10000)
+
+  it('can read shell output', async () => {
+    const cwd = path.resolve(__dirname, 'shell')
+    const test = {
+      name: 'Hello Test',
+      setup: '',
+      run: 'sh hello.sh',
+      input: 'Nathaniel',
+      output: 'Hello Nathaniel',
+      comparison: 'exact' as TestComparison,
+      timeout: 1,
+    }
+
+    await expect(run(test, cwd)).resolves.not.toThrow()
   }, 10000)
 })
