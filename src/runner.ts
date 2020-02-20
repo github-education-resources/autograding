@@ -31,13 +31,11 @@ export class TestTimeoutError extends TestError {
 export class TestOutputError extends TestError {
   expected: string
   actual: string
-  feedback: string
 
-  constructor(message: string, expected: string, actual: string, feedback: string) {
+  constructor(message: string, expected: string, actual: string) {
     super(`${message}\nExpected:\n${expected}\nActual:\n${actual}`)
     this.expected = expected
     this.actual = actual
-    this.feedback = feedback
 
     Error.captureStackTrace(this, TestOutputError)
   }
@@ -118,12 +116,22 @@ const runCommand = async (test: Test, cwd: string, timeout: number): Promise<voi
 
   await waitForExit(child, timeout)
 
-  // TODO: handle comparison modes
-  //   - includes
-  //   - regex
-  //   - equals
-  if (!output.includes(test.output)) {
-    throw new TestOutputError(`The output for test ${test.name} did not match`, test.output, output, '')
+  switch (test.comparison) {
+    case 'exact':
+      if (output != test.output) {
+        throw new TestOutputError(`The output for test ${test.name} did not match`, test.output, output)
+      }
+      break
+    case 'included':
+      if (!output.includes(test.output)) {
+        throw new TestOutputError(`The output for test ${test.name} did not match`, test.output, output)
+      }
+      break
+    case 'regex':
+      if (!output.match(new RegExp(test.output))) {
+        throw new TestOutputError(`The output for test ${test.name} did not match`, test.output, output)
+      }
+      break
   }
 }
 
