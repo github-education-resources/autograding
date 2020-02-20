@@ -8,8 +8,8 @@ export interface Test {
   readonly name: string
   readonly setup: string
   readonly run: string
-  readonly input: string
-  readonly output: string
+  readonly input?: string
+  readonly output?: string
   readonly timeout: number
   readonly comparison: TestComparison
 }
@@ -120,7 +120,12 @@ const runCommand = async (test: Test, cwd: string, timeout: number): Promise<voi
 
   await waitForExit(child, timeout)
 
-  const expected = normalizeLineEndings(test.output)
+  // Eventually work off the the test type
+  if ((!test.output || test.output == '') && (!test.input || test.input == '')) {
+    return
+  }
+
+  const expected = normalizeLineEndings(test.output || '')
   const actual = normalizeLineEndings(output)
 
   switch (test.comparison) {
@@ -131,8 +136,8 @@ const runCommand = async (test: Test, cwd: string, timeout: number): Promise<voi
       break
     case 'regex':
       // Note: do not use expected here
-      if (!actual.match(new RegExp(test.output))) {
-        throw new TestOutputError(`The output for test ${test.name} did not match`, test.output, actual)
+      if (!actual.match(new RegExp(test.output || ''))) {
+        throw new TestOutputError(`The output for test ${test.name} did not match`, test.output || '', actual)
       }
       break
     default:

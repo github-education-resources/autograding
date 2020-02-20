@@ -84,4 +84,19 @@ describe('runner', () => {
 
     await expect(run(test, cwd)).resolves.not.toThrow()
   }, 10000)
+
+  it('does not compare when there is no expected input and no expected output', async () => {
+    const cwd = path.resolve(__dirname, 'shell')
+    const test = {
+      name: 'Hello Test',
+      setup: '',
+      run: 'sh hello.sh',
+      input: undefined,
+      output: undefined,
+      comparison: 'exact' as TestComparison,
+      timeout: 1,
+    }
+
+    await expect(run(test, cwd)).resolves.not.toThrow()
+  }, 10000)
 })
