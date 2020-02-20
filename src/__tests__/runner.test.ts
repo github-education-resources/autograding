@@ -1,5 +1,5 @@
 import path from 'path'
-import {run} from '../runner'
+import {run, TestComparison} from '../runner'
 
 beforeEach(() => {
   // resetModules allows you to safely change the environment and mock imports
@@ -10,7 +10,7 @@ beforeEach(() => {
 describe('runner', () => {
   // The most basic test is just checking that the run method doesn't throw an error.
   // This test relies on our default payload.
-  it('runs', async () => {
+  it('matches included output', async () => {
     const cwd = path.resolve(__dirname, 'java')
     const test = {
       name: 'Hello Test',
@@ -18,13 +18,55 @@ describe('runner', () => {
       run: 'java -cp . Hello',
       input: 'Jeff',
       output: 'Hello Jeff',
+      comparison: 'included' as TestComparison,
+      timeout: 5000,
     }
 
     await expect(run(test, cwd)).resolves.not.toThrow()
+  }, 10000)
 
-    // TODO: test running with no expected input, output
-    // TODO: test TestError, TestTimeoutError, TestOutputError
+  it('matches regex output', async () => {
+    const cwd = path.resolve(__dirname, 'java')
+    const test = {
+      name: 'Hello Test',
+      setup: 'javac Hello.java',
+      run: 'java -cp . Hello',
+      input: 'Jeff',
+      output: 'Jeff',
+      comparison: 'regex' as TestComparison,
+      timeout: 5000,
+    }
 
-    // await expect(run(test, cwd)).rejects.toEqual...
+    await expect(run(test, cwd)).resolves.not.toThrow()
+  }, 10000)
+
+  it('matches exact output', async () => {
+    const cwd = path.resolve(__dirname, 'java')
+    const test = {
+      name: 'Hello Test',
+      setup: 'javac Hello.java',
+      run: 'java -cp . Hello',
+      input: 'Jeff',
+      output: 'What is your name?\r\nHello Jeff\n\r\n',
+      comparison: 'exact' as TestComparison,
+      timeout: 5000,
+    }
+
+    await expect(run(test, cwd)).resolves.not.toThrow()
+  }, 10000)
+
+  it('raises an error when output does not include the value', async () => {
+    const cwd = path.resolve(__dirname, 'java')
+    const test = {
+      name: 'Hello Test',
+      setup: 'javac Hello.java',
+      run: 'java -cp . Hello',
+      input: 'Jeff',
+      output: 'Hello Mike',
+      comparison: 'included' as TestComparison,
+      timeout: 5000,
+    }
+
+    await expect(run(test, cwd)).rejects.toThrow('The output for test Hello Test did not match')
   }, 10000)
 })
