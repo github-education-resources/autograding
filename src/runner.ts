@@ -41,6 +41,10 @@ export class TestOutputError extends TestError {
   }
 }
 
+const normalizeLineEndings = (text: string): string => {
+  return text.replace(/\r\n/gi, '\n')
+}
+
 const waitForExit = async (child: ChildProcess, timeout: number): Promise<void> => {
   // eslint-disable-next-line no-undef
   return new Promise((resolve, reject) => {
@@ -116,21 +120,25 @@ const runCommand = async (test: Test, cwd: string, timeout: number): Promise<voi
 
   await waitForExit(child, timeout)
 
+  const expected = normalizeLineEndings(test.output)
+  const actual = normalizeLineEndings(output)
+
   switch (test.comparison) {
     case 'exact':
-      if (output != test.output) {
-        throw new TestOutputError(`The output for test ${test.name} did not match`, test.output, output)
+      if (actual != expected) {
+        throw new TestOutputError(`The output for test ${test.name} did not match`, expected, actual)
       }
       break
     case 'regex':
-      if (!output.match(new RegExp(test.output))) {
-        throw new TestOutputError(`The output for test ${test.name} did not match`, test.output, output)
+      // Note: do not use expected here
+      if (!actual.match(new RegExp(test.output))) {
+        throw new TestOutputError(`The output for test ${test.name} did not match`, test.output, actual)
       }
       break
     default:
       // The default comparison mode is 'included'
-      if (!output.includes(test.output)) {
-        throw new TestOutputError(`The output for test ${test.name} did not match`, test.output, output)
+      if (!actual.includes(expected)) {
+        throw new TestOutputError(`The output for test ${test.name} did not match`, expected, actual)
       }
       break
   }

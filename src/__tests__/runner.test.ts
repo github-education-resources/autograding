@@ -47,7 +47,7 @@ describe('runner', () => {
       setup: 'javac Hello.java',
       run: 'java -cp . Hello',
       input: 'Jeff',
-      output: 'What is your name?\r\nHello Jeff\n\r\n',
+      output: 'What is your name?\nHello Jeff\n\n',
       comparison: 'exact' as TestComparison,
       timeout: 5000,
     }
