@@ -1,10 +1,15 @@
 import path from 'path'
-import {run, TestComparison} from '../runner'
+import * as core from '@actions/core'
+import {run, runAll, TestComparison} from '../runner'
 
 beforeEach(() => {
   // resetModules allows you to safely change the environment and mock imports
   // separately in each of your tests
   jest.resetModules()
+  jest.restoreAllMocks()
+  jest.spyOn(core, 'setOutput').mockImplementation(() => {
+    return
+  })
 })
 
 describe('runner', () => {
@@ -98,5 +103,28 @@ describe('runner', () => {
     }
 
     await expect(run(test, cwd)).resolves.not.toThrow()
+  }, 10000)
+})
+
+describe('runAll', () => {
+  it('counts the points', async () => {
+    const cwd = path.resolve(__dirname, 'shell')
+    const tests = [
+      {
+        name: 'Hello Test',
+        setup: '',
+        run: 'sh hello.sh',
+        input: undefined,
+        output: undefined,
+        comparison: 'exact' as TestComparison,
+        timeout: 1,
+        points: 7,
+      },
+    ]
+
+    // Expect the points to be in the output
+    const setOutputSpy = jest.spyOn(core, 'setOutput')
+    await expect(runAll(tests, cwd)).resolves.not.toThrow()
+    expect(setOutputSpy).toHaveBeenCalledWith('Points', '7/7')
   }, 10000)
 })
