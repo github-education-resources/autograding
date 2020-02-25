@@ -182,11 +182,10 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
     } catch (error) {
       core.setFailed(error.message)
     }
-
-    // Set the number of points
-    if (totalPoints) {
-      console.log(`Points ${points}/${totalPoints}`)
-      core.setOutput('Points', `${points}/${totalPoints}`)
-    }
+  }
+  // Set the number of points
+  if (totalPoints) {
+    console.log(`Points ${points}/${totalPoints}`)
+    core.setOutput('Points', `${points}/${totalPoints}`)
   }
 }
