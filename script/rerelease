@@ -1,7 +1,7 @@
 # Checkout the release branch
 git checkout releases/beta
-# Get this branch even with master so the latest changes are included
-git reset --hard master
+# Get this branch even with points so the latest changes are included
+git reset --hard points
 # Rerun the checks and rebuild the TypeScript and ncc distribution
 npm run build
 # Add the dist
@@ -16,5 +16,5 @@ git push origin :refs/tags/beta
 git tag -fa beta -m "beta"
 # Push everything
 git push origin beta
-# Checkout master again
-git checkout master
+# Checkout points again
+git checkout points
