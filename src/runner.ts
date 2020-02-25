@@ -165,6 +165,7 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
   let points = null
   let totalPoints = null
 
+  console.log('Running all tests')
   for (const test of tests) {
     try {
       if (test.points) {
@@ -183,7 +184,8 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
     }
 
     // Set the number of points
-    if (points && totalPoints) {
+    if (totalPoints) {
+      console.log(`Points ${points}/${totalPoints}`)
       core.setOutput('Points', `${points}/${totalPoints}`)
     }
   }
