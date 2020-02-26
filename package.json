@@ -17,11 +17,11 @@
   "author": "GitHub",
   "license": "ISC",
   "dependencies": {
-    "tree-kill": "^1.2.2"
+    "tree-kill": "^1.2.2",
+    "@actions/core": "^1.2.2",
+    "@actions/github": "^2.1.1"
   },
   "devDependencies": {
-    "@actions/core": "^1.2.2",
-    "@actions/github": "^2.1.1",
     "@types/jest": "^25.1.1",
     "@types/nock": "^11.1.0",
     "@types/node": "^13.5.3",
