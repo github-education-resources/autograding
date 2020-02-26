@@ -9,6 +9,10 @@ beforeEach(() => {
   // resetModules allows you to safely change the environment and mock imports
   // separately in each of your tests
   jest.resetModules()
+  jest.restoreAllMocks()
+  jest.spyOn(core, 'setOutput').mockImplementation(() => {
+    return
+  })
   jest.spyOn(core, 'getInput').mockImplementation((name: string): string => {
     if (name === 'token') return '12345'
     return ''

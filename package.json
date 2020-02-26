@@ -17,12 +17,13 @@
   "author": "GitHub",
   "license": "ISC",
   "dependencies": {
-    "@actions/core": "^1.2.2",
-    "@actions/github": "^2.1.0",
     "tree-kill": "^1.2.2"
   },
   "devDependencies": {
+    "@actions/core": "^1.2.2",
+    "@actions/github": "^2.1.1",
     "@types/jest": "^25.1.1",
+    "@types/nock": "^11.1.0",
     "@types/node": "^13.5.3",
     "@typescript-eslint/eslint-plugin": "^2.18.0",
     "@typescript-eslint/parser": "^2.18.0",
