@@ -1,6 +1,7 @@
 import {spawn, ChildProcess} from 'child_process'
 import kill from 'tree-kill'
 import * as core from '@actions/core'
+import {setCheckRunOutput} from './output'
 
 export type TestComparison = 'exact' | 'included' | 'regex'
 
@@ -11,6 +12,7 @@ export interface Test {
   readonly input?: string
   readonly output?: string
   readonly timeout: number
+  readonly points?: number
   readonly comparison: TestComparison
 }
 
@@ -161,13 +163,32 @@ export const run = async (test: Test, cwd: string): Promise<void> => {
 }
 
 export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => {
+  let points = null
+  let totalPoints = null
+
+  console.log('Running all tests')
   for (const test of tests) {
     try {
+      if (test.points) {
+        totalPoints = totalPoints || 0
+        totalPoints += test.points
+      }
       console.log(`Running ${test.name}`)
       await run(test, cwd)
       console.log(`${test.name} Passed`)
+      if (test.points) {
+        points = points || 0
+        points += test.points
+      }
     } catch (error) {
       core.setFailed(error.message)
     }
+  }
+  // Set the number of points
+  if (totalPoints) {
+    const text = `Points ${points}/${totalPoints}`
+    console.log(text)
+    core.setOutput('Points', `${points}/${totalPoints}`)
+    await setCheckRunOutput(text)
   }
 }
