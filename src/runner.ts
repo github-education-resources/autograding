@@ -98,6 +98,8 @@ const runSetup = async (test: Test, cwd: string, timeout: number): Promise<void>
   const setup = spawn(test.setup, {
     cwd,
     shell: true,
+    env: {},
+  })
 
   setup.stdout.on('data', chunk => {
     process.stdout.write(chunk)
@@ -114,6 +116,7 @@ const runCommand = async (test: Test, cwd: string, timeout: number): Promise<voi
   const child = spawn(test.run, {
     cwd,
     shell: true,
+    env: {},
   })
 
   let output = ''
