@@ -1,5 +1,6 @@
 import {spawn, ChildProcess} from 'child_process'
 import kill from 'tree-kill'
+import {v4 as uuidv4} from 'uuid'
 import * as core from '@actions/core'
 import {setCheckRunOutput} from './output'
 
@@ -178,6 +179,10 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
   let points = null
   let totalPoints = null
 
+  // https://help.github.com/en/actions/reference/development-tools-for-github-actions#stop-and-start-log-commands-stop-commands
+  const token = uuidv4()
+  console.log(`::stop-commands::${token}`)
+
   console.log('Running all tests')
   for (const test of tests) {
     try {
@@ -196,6 +201,10 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
       core.setFailed(error.message)
     }
   }
+
+  // Restart command processing
+  console.log(`::${token}::`)
+
   // Set the number of points
   if (totalPoints) {
     const text = `Points ${points}/${totalPoints}`
