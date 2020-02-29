@@ -104,6 +104,28 @@ describe('runner', () => {
 
     await expect(run(test, cwd)).resolves.not.toThrow()
   }, 10000)
+
+  it('prints the stdout and stdin', async () => {
+    const stdoutSpy = jest.spyOn(process.stdout, 'write')
+
+    const cwd = path.resolve(__dirname, 'shell')
+    const test = {
+      name: 'Hello Test',
+      setup: '',
+      run: 'sh hello.sh',
+      input: undefined,
+      output: undefined,
+      comparison: 'exact' as TestComparison,
+      timeout: 1,
+    }
+
+    await expect(run(test, cwd)).resolves.not.toThrow()
+
+    expect(stdoutSpy).toHaveBeenCalledWith(
+      // Hello Nathaniel\n
+      Buffer.from([72, 101, 108, 108, 111, 32, 78, 97, 116, 104, 97, 110, 105, 101, 108, 10]),
+    )
+  }, 10000)
 })
 
 describe('runAll', () => {

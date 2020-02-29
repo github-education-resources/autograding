@@ -97,6 +97,13 @@ const runSetup = async (test: Test, cwd: string, timeout: number): Promise<void>
   const setup = spawn(test.setup, {
     cwd,
     shell: true,
+
+  setup.stdout.on('data', chunk => {
+    process.stdout.write(chunk)
+  })
+
+  setup.stderr.on('data', chunk => {
+    process.stderr.write(chunk)
   })
 
   await waitForExit(setup, timeout)
@@ -111,7 +118,12 @@ const runCommand = async (test: Test, cwd: string, timeout: number): Promise<voi
   let output = ''
 
   child.stdout.on('data', chunk => {
-    output += chunk + '\r\n'
+    process.stdout.write(chunk)
+    output += chunk
+  })
+
+  child.stderr.on('data', chunk => {
+    process.stderr.write(chunk)
   })
 
   // Preload the inputs

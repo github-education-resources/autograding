@@ -5,8 +5,8 @@ public class Hello {
         String line;
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("What is your name?");
+        System.out.println("What is your name?");
         line = scanner.nextLine();
-        System.out.print("Hello " + line + "\n");
+        System.out.println("Hello " + line);
     }
 }
