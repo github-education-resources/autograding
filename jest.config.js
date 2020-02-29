@@ -6,9 +6,13 @@ nock.disableNetConnect()
 // Instead, bind to stdout and hide all debug messages
 const processStdoutWrite = process.stdout.write.bind(process.stdout)
 process.stdout.write = (str, encoding, cb) => {
-  // Debug messages begin with ::
-  if (str.match(/^::/)) return false
-  return processStdoutWrite(str, encoding, cb)
+  return false
+}
+
+const processStderrWrite = process.stderr.write.bind(process.stderr)
+process.stderr.write = (str, encoding, cb) => {
+  if (str.match(/Hello/)) return false
+  processStderrWrite(str, encoding, cb)
 }
 
 module.exports = {

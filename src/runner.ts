@@ -1,5 +1,6 @@
 import {spawn, ChildProcess} from 'child_process'
 import kill from 'tree-kill'
+import {v4 as uuidv4} from 'uuid'
 import * as core from '@actions/core'
 import {setCheckRunOutput} from './output'
 
@@ -51,7 +52,6 @@ const waitForExit = async (child: ChildProcess, timeout: number): Promise<void> 
   // eslint-disable-next-line no-undef
   return new Promise((resolve, reject) => {
     let timedOut = false
-    let error: string | null = null
 
     const exitTimeout = setTimeout(() => {
       timedOut = true
@@ -63,9 +63,7 @@ const waitForExit = async (child: ChildProcess, timeout: number): Promise<void> 
       if (timedOut) return
       clearTimeout(exitTimeout)
 
-      if (error) {
-        reject(new TestError(`Error: ${error}`))
-      } else if (code === 0) {
+      if (code === 0) {
         resolve(undefined)
       } else {
         reject(new TestError(`Error: Exit with code: ${code} and signal: ${signal}`))
@@ -78,14 +76,6 @@ const waitForExit = async (child: ChildProcess, timeout: number): Promise<void> 
 
       reject(error)
     })
-
-    if (child.stderr) {
-      // TODO: may need to generate an annotation here
-      child.stderr.on('data', chunk => {
-        if (error) error += '\r\n' + chunk
-        else error = chunk
-      })
-    }
   })
 }
 
@@ -97,6 +87,15 @@ const runSetup = async (test: Test, cwd: string, timeout: number): Promise<void>
   const setup = spawn(test.setup, {
     cwd,
     shell: true,
+    env: {},
+  })
+
+  setup.stdout.on('data', chunk => {
+    process.stdout.write(chunk)
+  })
+
+  setup.stderr.on('data', chunk => {
+    process.stderr.write(chunk)
   })
 
   await waitForExit(setup, timeout)
@@ -106,12 +105,18 @@ const runCommand = async (test: Test, cwd: string, timeout: number): Promise<voi
   const child = spawn(test.run, {
     cwd,
     shell: true,
+    env: {},
   })
 
   let output = ''
 
   child.stdout.on('data', chunk => {
-    output += chunk + '\r\n'
+    process.stdout.write(chunk)
+    output += chunk
+  })
+
+  child.stderr.on('data', chunk => {
+    process.stderr.write(chunk)
   })
 
   // Preload the inputs
@@ -166,6 +171,10 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
   let points = null
   let totalPoints = null
 
+  // https://help.github.com/en/actions/reference/development-tools-for-github-actions#stop-and-start-log-commands-stop-commands
+  const token = uuidv4()
+  console.log(`::stop-commands::${token}`)
+
   console.log('Running all tests')
   for (const test of tests) {
     try {
@@ -184,6 +193,10 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
       core.setFailed(error.message)
     }
   }
+
+  // Restart command processing
+  console.log(`::${token}::`)
+
   // Set the number of points
   if (totalPoints) {
     const text = `Points ${points}/${totalPoints}`
