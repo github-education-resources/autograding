@@ -52,7 +52,6 @@ const waitForExit = async (child: ChildProcess, timeout: number): Promise<void> 
   // eslint-disable-next-line no-undef
   return new Promise((resolve, reject) => {
     let timedOut = false
-    let error: string | null = null
 
     const exitTimeout = setTimeout(() => {
       timedOut = true
@@ -64,9 +63,7 @@ const waitForExit = async (child: ChildProcess, timeout: number): Promise<void> 
       if (timedOut) return
       clearTimeout(exitTimeout)
 
-      if (error) {
-        reject(new TestError(`Error: ${error}`))
-      } else if (code === 0) {
+      if (code === 0) {
         resolve(undefined)
       } else {
         reject(new TestError(`Error: Exit with code: ${code} and signal: ${signal}`))
@@ -79,14 +76,6 @@ const waitForExit = async (child: ChildProcess, timeout: number): Promise<void> 
 
       reject(error)
     })
-
-    if (child.stderr) {
-      // TODO: may need to generate an annotation here
-      child.stderr.on('data', chunk => {
-        if (error) error += '\r\n' + chunk
-        else error = chunk
-      })
-    }
   })
 }
 
