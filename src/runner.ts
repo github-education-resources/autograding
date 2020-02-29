@@ -168,8 +168,9 @@ export const run = async (test: Test, cwd: string): Promise<void> => {
 }
 
 export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => {
-  let points = null
-  let totalPoints = null
+  let points = 0
+  let availablePoints = 0
+  let hasPoints = false
 
   // https://help.github.com/en/actions/reference/development-tools-for-github-actions#stop-and-start-log-commands-stop-commands
   const token = uuidv4()
@@ -179,14 +180,13 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
   for (const test of tests) {
     try {
       if (test.points) {
-        totalPoints = totalPoints || 0
-        totalPoints += test.points
+        hasPoints = true
+        availablePoints += test.points
       }
       console.log(`Running ${test.name}`)
       await run(test, cwd)
       console.log(`${test.name} Passed`)
       if (test.points) {
-        points = points || 0
         points += test.points
       }
     } catch (error) {
@@ -198,10 +198,10 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
   console.log(`::${token}::`)
 
   // Set the number of points
-  if (totalPoints) {
-    const text = `Points ${points}/${totalPoints}`
+  if (hasPoints) {
+    const text = `Points ${points}/${availablePoints}`
     console.log(text)
-    core.setOutput('Points', `${points}/${totalPoints}`)
+    core.setOutput('Points', `${points}/${availablePoints}`)
     await setCheckRunOutput(text)
   }
 }
