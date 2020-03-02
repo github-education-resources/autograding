@@ -87,7 +87,9 @@ const runSetup = async (test: Test, cwd: string, timeout: number): Promise<void>
   const setup = spawn(test.setup, {
     cwd,
     shell: true,
-    env: {},
+    env: {
+      PATH: process.env['PATH'],
+    },
   })
 
   setup.stdout.on('data', chunk => {
@@ -105,7 +107,9 @@ const runCommand = async (test: Test, cwd: string, timeout: number): Promise<voi
   const child = spawn(test.run, {
     cwd,
     shell: true,
-    env: {},
+    env: {
+      PATH: process.env['PATH'],
+    },
   })
 
   let output = ''
