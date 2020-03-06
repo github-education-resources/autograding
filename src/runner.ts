@@ -48,8 +48,10 @@ const normalizeLineEndings = (text: string): string => {
   return text.replace(/\r\n/gi, '\n').trim()
 }
 
-const indent = (text: string): string => {
-  return text.replace(/^/gi, '  ')
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const indent = (text: any): string => {
+  const str = new String(text)
+  return str.replace(/^/gi, '  ')
 }
 
 const waitForExit = async (child: ChildProcess, timeout: number): Promise<void> => {
@@ -93,15 +95,18 @@ const runSetup = async (test: Test, cwd: string, timeout: number): Promise<void>
     shell: true,
     env: {
       PATH: process.env['PATH'],
+      FORCE_COLOR: 'true',
     },
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setup.stdout.on('data', chunk => {
-    process.stdout.write(chunk)
+    process.stdout.write(indent(chunk))
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setup.stderr.on('data', chunk => {
-    process.stderr.write(chunk)
+    process.stderr.write(indent(chunk))
   })
 
   await waitForExit(setup, timeout)
@@ -113,6 +118,7 @@ const runCommand = async (test: Test, cwd: string, timeout: number): Promise<voi
     shell: true,
     env: {
       PATH: process.env['PATH'],
+      FORCE_COLOR: 'true',
     },
   })
 
