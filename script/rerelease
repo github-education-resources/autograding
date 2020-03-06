@@ -1,6 +1,6 @@
 # Checkout the release branch
 git checkout releases/beta-prettify-output
-# Get this branch even with /prettify-output so the latest changes are included
+# Get this branch even with prettify-output so the latest changes are included
 git reset --hard prettify-output
 # Rerun the checks and rebuild the TypeScript and ncc distribution
 npm run build
@@ -16,5 +16,5 @@ git push origin :refs/tags/beta-prettify-output
 git tag -fa beta-prettify-output -m "beta-prettify-output"
 # Push everything
 git push origin beta-prettify-output
-# Checkout /prettify-output again
-git checkout /prettify-output
+# Checkout prettify-output again
+git checkout prettify-output
