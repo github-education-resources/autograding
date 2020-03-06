@@ -3,6 +3,7 @@ import kill from 'tree-kill'
 import {v4 as uuidv4} from 'uuid'
 import * as core from '@actions/core'
 import {setCheckRunOutput} from './output'
+import * as os from 'os'
 
 export type TestComparison = 'exact' | 'included' | 'regex'
 
@@ -42,6 +43,10 @@ export class TestOutputError extends TestError {
 
     Error.captureStackTrace(this, TestOutputError)
   }
+}
+
+const log = (text: string): void => {
+  process.stdout.write(text + os.EOL)
 }
 
 const normalizeLineEndings = (text: string): string => {
@@ -188,9 +193,9 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
 
   // https://help.github.com/en/actions/reference/development-tools-for-github-actions#stop-and-start-log-commands-stop-commands
   const token = uuidv4()
-  console.log('')
-  console.log(`::stop-commands::${token}`)
-  console.log('')
+  log('')
+  log(`::stop-commands::${token}`)
+  log('')
 
   let failed = false
 
@@ -200,36 +205,36 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
         hasPoints = true
         availablePoints += test.points
       }
-      console.log('\x1b[36m%s\x1b[0m', `📝 ${test.name}`) // cyan
-      console.log('')
+      log('\x1b[36m%s\x1b[0m', `📝 ${test.name}`) // cyan
+      log('')
       await run(test, cwd)
-      console.log('')
-      console.log(`✅`)
+      log('')
+      log(`✅`)
       if (test.points) {
         points += test.points
       }
     } catch (error) {
       failed = true
-      console.log('')
-      console.log('❌')
+      log('')
+      log('❌')
       core.setFailed(error.message)
     }
   }
 
   // Restart command processing
-  console.log('')
-  console.log(`::${token}::`)
+  log('')
+  log(`::${token}::`)
 
   if (!failed) {
-    console.log('')
-    console.log('✨🌟💖💎🦄💎💖🌟✨🌟💖💎🦄💎💖🌟✨')
-    console.log('')
+    log('')
+    log('✨🌟💖💎🦄💎💖🌟✨🌟💖💎🦄💎💖🌟✨')
+    log('')
   }
 
   // Set the number of points
   if (hasPoints) {
     const text = `Points ${points}/${availablePoints}`
-    console.log(text)
+    log(text)
     core.setOutput('Points', `${points}/${availablePoints}`)
     await setCheckRunOutput(text)
   }
