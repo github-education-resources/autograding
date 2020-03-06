@@ -48,6 +48,10 @@ const normalizeLineEndings = (text: string): string => {
   return text.replace(/\r\n/gi, '\n').trim()
 }
 
+const indent = (text: string): string => {
+  return text.replace(/^/gi, '  ')
+}
+
 const waitForExit = async (child: ChildProcess, timeout: number): Promise<void> => {
   // eslint-disable-next-line no-undef
   return new Promise((resolve, reject) => {
@@ -115,12 +119,12 @@ const runCommand = async (test: Test, cwd: string, timeout: number): Promise<voi
   let output = ''
 
   child.stdout.on('data', chunk => {
-    process.stdout.write(chunk)
+    process.stdout.write(indent(chunk))
     output += chunk
   })
 
   child.stderr.on('data', chunk => {
-    process.stderr.write(chunk)
+    process.stderr.write(indent(chunk))
   })
 
   // Preload the inputs
@@ -179,8 +183,8 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
   // https://help.github.com/en/actions/reference/development-tools-for-github-actions#stop-and-start-log-commands-stop-commands
   const token = uuidv4()
   console.log(`::stop-commands::${token}`)
+  console.log('')
 
-  console.log('Running all tests')
   for (const test of tests) {
     try {
       if (test.points) {
