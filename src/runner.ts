@@ -205,18 +205,19 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
         hasPoints = true
         availablePoints += test.points
       }
-      log('\x1b[36m%s\x1b[0m', `📝 ${test.name}`) // cyan
+      log(`\x1b[36m📝 ${test.name}\x1b[0m`) // cyan
       log('')
       await run(test, cwd)
       log('')
-      log(`✅`)
+      log(`\x1b[32m✅ ${test.name}\x1b[0m`) // green
+      log(``)
       if (test.points) {
         points += test.points
       }
     } catch (error) {
       failed = true
       log('')
-      log('❌')
+      log(`\x1b[31m❌ ${test.name}\x1b[0m`) // red
       core.setFailed(error.message)
     }
   }
@@ -225,7 +226,13 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
   log('')
   log(`::${token}::`)
 
-  if (!failed) {
+  if (failed) {
+    // log('')
+    // log('😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭')
+    // log('')
+  } else {
+    log('')
+    log('\x1b[32mAll tests passed\x1b[0m') // green
     log('')
     log('✨🌟💖💎🦄💎💖🌟✨🌟💖💎🦄💎💖🌟✨')
     log('')
@@ -234,7 +241,7 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
   // Set the number of points
   if (hasPoints) {
     const text = `Points ${points}/${availablePoints}`
-    log(text)
+    log(`\x1b[46m\x1b[35m${text}\x1b[0m`)
     core.setOutput('Points', `${points}/${availablePoints}`)
     await setCheckRunOutput(text)
   }
