@@ -51,7 +51,7 @@ const normalizeLineEndings = (text: string): string => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const indent = (text: any): string => {
   const str = new String(text)
-  return str.replace(/^/gi, '  ')
+  return str.replace(/^/gim, '  ')
 }
 
 const waitForExit = async (child: ChildProcess, timeout: number): Promise<void> => {
