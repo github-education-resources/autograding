@@ -3,6 +3,10 @@ import kill from 'tree-kill'
 import {v4 as uuidv4} from 'uuid'
 import * as core from '@actions/core'
 import {setCheckRunOutput} from './output'
+import * as os from 'os'
+import chalk from 'chalk'
+
+const color = new chalk.Instance({level: 1})
 
 export type TestComparison = 'exact' | 'included' | 'regex'
 
@@ -44,8 +48,19 @@ export class TestOutputError extends TestError {
   }
 }
 
+const log = (text: string): void => {
+  process.stdout.write(text + os.EOL)
+}
+
 const normalizeLineEndings = (text: string): string => {
   return text.replace(/\r\n/gi, '\n').trim()
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const indent = (text: any): string => {
+  let str = '' + new String(text)
+  str = str.replace(/\r\n/gim, '\n').replace(/\n/gim, '\n  ')
+  return str
 }
 
 const waitForExit = async (child: ChildProcess, timeout: number): Promise<void> => {
@@ -89,15 +104,21 @@ const runSetup = async (test: Test, cwd: string, timeout: number): Promise<void>
     shell: true,
     env: {
       PATH: process.env['PATH'],
+      FORCE_COLOR: 'true',
     },
   })
 
+  // Start with a single new line
+  process.stdout.write(indent('\n'))
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setup.stdout.on('data', chunk => {
-    process.stdout.write(chunk)
+    process.stdout.write(indent(chunk))
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setup.stderr.on('data', chunk => {
-    process.stderr.write(chunk)
+    process.stderr.write(indent(chunk))
   })
 
   await waitForExit(setup, timeout)
@@ -109,18 +130,22 @@ const runCommand = async (test: Test, cwd: string, timeout: number): Promise<voi
     shell: true,
     env: {
       PATH: process.env['PATH'],
+      FORCE_COLOR: 'true',
     },
   })
 
   let output = ''
 
+  // Start with a single new line
+  process.stdout.write(indent('\n'))
+
   child.stdout.on('data', chunk => {
-    process.stdout.write(chunk)
+    process.stdout.write(indent(chunk))
     output += chunk
   })
 
   child.stderr.on('data', chunk => {
-    process.stderr.write(chunk)
+    process.stderr.write(indent(chunk))
   })
 
   // Preload the inputs
@@ -178,33 +203,53 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
 
   // https://help.github.com/en/actions/reference/development-tools-for-github-actions#stop-and-start-log-commands-stop-commands
   const token = uuidv4()
-  console.log(`::stop-commands::${token}`)
+  log('')
+  log(`::stop-commands::${token}`)
+  log('')
 
-  console.log('Running all tests')
+  let failed = false
+
   for (const test of tests) {
     try {
       if (test.points) {
         hasPoints = true
         availablePoints += test.points
       }
-      console.log(`Running ${test.name}`)
+      log(color.cyan(`📝 ${test.name}`))
+      log('')
       await run(test, cwd)
-      console.log(`${test.name} Passed`)
+      log('')
+      log(color.green(`✅ ${test.name}`))
+      log(``)
       if (test.points) {
         points += test.points
       }
     } catch (error) {
+      failed = true
+      log('')
+      log(color.red(`❌ ${test.name}`))
       core.setFailed(error.message)
     }
   }
 
   // Restart command processing
-  console.log(`::${token}::`)
+  log('')
+  log(`::${token}::`)
+
+  if (failed) {
+    // We need a good failure experience
+  } else {
+    log('')
+    log(color.green('All tests passed'))
+    log('')
+    log('✨🌟💖💎🦄💎💖🌟✨🌟💖💎🦄💎💖🌟✨')
+    log('')
+  }
 
   // Set the number of points
   if (hasPoints) {
     const text = `Points ${points}/${availablePoints}`
-    console.log(text)
+    log(color.bold.bgCyan.black(text))
     core.setOutput('Points', `${points}/${availablePoints}`)
     await setCheckRunOutput(text)
   }
