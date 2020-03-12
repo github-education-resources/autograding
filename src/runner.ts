@@ -6,6 +6,8 @@ import {setCheckRunOutput} from './output'
 import * as os from 'os'
 import chalk from 'chalk'
 
+const color = new chalk.Instance({level: 2})
+
 export type TestComparison = 'exact' | 'included' | 'regex'
 
 export interface Test {
@@ -213,11 +215,11 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
         hasPoints = true
         availablePoints += test.points
       }
-      log(chalk.cyan(`📝 ${test.name}`))
+      log(color.cyan(`📝 ${test.name}`))
       log('')
       await run(test, cwd)
       log('')
-      log(chalk.green(`✅ ${test.name}`))
+      log(color.green(`✅ ${test.name}`))
       log(``)
       if (test.points) {
         points += test.points
@@ -225,7 +227,7 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
     } catch (error) {
       failed = true
       log('')
-      log(chalk.red(`❌ ${test.name}`))
+      log(color.red(`❌ ${test.name}`))
       core.setFailed(error.message)
     }
   }
@@ -238,7 +240,7 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
     // We need a good failure experience
   } else {
     log('')
-    log(chalk.green('All tests passed'))
+    log(color.green('All tests passed'))
     log('')
     log('✨🌟💖💎🦄💎💖🌟✨🌟💖💎🦄💎💖🌟✨')
     log('')
@@ -248,9 +250,9 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
   if (hasPoints) {
     const text = `Points ${points}/${availablePoints}`
     if (points === availablePoints) {
-      log(chalk.bold.bgGreen.white(text))
+      log(color.bold.bgGreen.white(text))
     } else {
-      log(chalk.bold.bgRed.white(text))
+      log(color.bold.bgRed.white(text))
     }
     core.setOutput('Points', `${points}/${availablePoints}`)
     await setCheckRunOutput(text)
