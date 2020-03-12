@@ -4,6 +4,7 @@ import {v4 as uuidv4} from 'uuid'
 import * as core from '@actions/core'
 import {setCheckRunOutput} from './output'
 import * as os from 'os'
+import chalk from 'chalk'
 
 export type TestComparison = 'exact' | 'included' | 'regex'
 
@@ -55,8 +56,9 @@ const normalizeLineEndings = (text: string): string => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const indent = (text: any): string => {
-  const str = new String(text)
-  return str.replace(/^/gim, '  ')
+  let str = '' + new String(text)
+  str = str.replace(/\r\n/gim, '\n').replace(/\n/gim, '\n  ')
+  return str
 }
 
 const waitForExit = async (child: ChildProcess, timeout: number): Promise<void> => {
@@ -104,6 +106,9 @@ const runSetup = async (test: Test, cwd: string, timeout: number): Promise<void>
     },
   })
 
+  // Start with a single new line
+  process.stdout.write(indent('\n'))
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setup.stdout.on('data', chunk => {
     process.stdout.write(indent(chunk))
@@ -128,6 +133,9 @@ const runCommand = async (test: Test, cwd: string, timeout: number): Promise<voi
   })
 
   let output = ''
+
+  // Start with a single new line
+  process.stdout.write(indent('\n'))
 
   child.stdout.on('data', chunk => {
     process.stdout.write(indent(chunk))
@@ -205,11 +213,11 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
         hasPoints = true
         availablePoints += test.points
       }
-      log(`\x1b[36m📝 ${test.name}\x1b[0m`) // cyan
+      log(chalk.cyan(`📝 ${test.name}`))
       log('')
       await run(test, cwd)
       log('')
-      log(`\x1b[32m✅ ${test.name}\x1b[0m`) // green
+      log(chalk.green(`✅ ${test.name}`))
       log(``)
       if (test.points) {
         points += test.points
@@ -217,7 +225,7 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
     } catch (error) {
       failed = true
       log('')
-      log(`\x1b[31m❌ ${test.name}\x1b[0m`) // red
+      log(chalk.red(`❌ ${test.name}`))
       core.setFailed(error.message)
     }
   }
@@ -227,12 +235,10 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
   log(`::${token}::`)
 
   if (failed) {
-    // log('')
-    // log('😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭')
-    // log('')
+    // We need a good failure experience
   } else {
     log('')
-    log('\x1b[32mAll tests passed\x1b[0m') // green
+    log(chalk.green('All tests passed'))
     log('')
     log('✨🌟💖💎🦄💎💖🌟✨🌟💖💎🦄💎💖🌟✨')
     log('')
@@ -241,7 +247,11 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
   // Set the number of points
   if (hasPoints) {
     const text = `Points ${points}/${availablePoints}`
-    log(`\x1b[46m\x1b[35m${text}\x1b[0m`)
+    if (points === availablePoints) {
+      log(chalk.bold.bgGreen.white(text))
+    } else {
+      log(chalk.bold.bgRed.white(text))
+    }
     core.setOutput('Points', `${points}/${availablePoints}`)
     await setCheckRunOutput(text)
   }
