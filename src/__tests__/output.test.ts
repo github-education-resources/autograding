@@ -25,7 +25,7 @@ afterEach(() => {
 })
 
 describe('output', () => {
-  it('matches included output', async () => {
+  beforeEach(() => {
     // Use nock to mock out the external call to delete the comment
     // Setting this up creates an expectation that must be called and returns a 200 response
     nock('https://api.github.com')
@@ -44,7 +44,9 @@ describe('output', () => {
           },
         ],
       })
+  })
 
+  it('matches included output', async () => {
     nock('https://api.github.com')
       .patch(`/repos/example/repository/check-runs/222222`, body => {
         if (body.output.text !== 'Dogs on parade') return false
