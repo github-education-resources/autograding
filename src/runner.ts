@@ -6,7 +6,7 @@ import {setCheckRunOutput} from './output'
 import * as os from 'os'
 import chalk from 'chalk'
 
-const color = new chalk.Instance({level: 2})
+const color = new chalk.Instance({level: 1})
 
 export type TestComparison = 'exact' | 'included' | 'regex'
 
