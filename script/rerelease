@@ -1,20 +1,20 @@
 # Checkout the release branch
-git checkout releases/beta-prettify-output
-# Get this branch even with prettify-output so the latest changes are included
-git reset --hard prettify-output
+git checkout releases/beta
+# Get this branch even with master so the latest changes are included
+git reset --hard master
 # Rerun the checks and rebuild the TypeScript and ncc distribution
 npm run build
 # Add the dist
 git add .
 # Commit
-git commit -m "beta-prettify-output"
+git commit -m "beta"
 # Force push to overwrite any previous commits for this branch
-git push -f origin releases/beta-prettify-output
-# Remove previously pushed tags (beta-prettify-output will be unusable momentarily until you re-push)
-git push origin :refs/tags/beta-prettify-output
+git push -f origin releases/beta
+# Remove previously pushed tags (beta will be unusable momentarily until you re-push)
+git push origin :refs/tags/beta
 # Re-apply the tag
-git tag -fa beta-prettify-output -m "beta-prettify-output"
+git tag -fa beta -m "beta"
 # Push everything
-git push origin beta-prettify-output
-# Checkout prettify-output again
-git checkout prettify-output
+git push origin beta
+# Checkout master again
+git checkout master
