@@ -200,6 +200,49 @@ describe('runAll', () => {
     expect(setOutputSpy).toHaveBeenCalledWith('Points', '7/7')
   }, 10000)
 
+  it('counts extra credit points', async () => {
+    const cwd = path.resolve(__dirname, 'shell')
+    const tests = [
+      {
+        name: 'Regular credit Test',
+        setup: '',
+        run: 'sh hello.sh',
+        input: undefined,
+        output: undefined,
+        comparison: 'exact' as TestComparison,
+        timeout: 1,
+        points: 7,
+      },
+      {
+        name: 'Extra credit Test',
+        setup: '',
+        run: 'sh hello.sh',
+        input: undefined,
+        output: undefined,
+        comparison: 'exact' as TestComparison,
+        timeout: 1,
+		extra: true,
+        points: 3,
+      },
+      {
+        name: 'Failing extra credit Test',
+        setup: '',
+        run: 'sh hello.sh',
+        input: undefined,
+        output: 'Fail this test',
+        comparison: 'exact' as TestComparison,
+        timeout: 1,
+		extra: true,
+        points: 5,
+      },
+    ]
+
+    // Expect the points to be in the output
+    const setOutputSpy = jest.spyOn(core, 'setOutput')
+    await expect(runAll(tests, cwd)).resolves.not.toThrow()
+    expect(setOutputSpy).toHaveBeenCalledWith('Points', '10/7')
+  }, 10000)
+
   it('gets 0 points if it fails', async () => {
     const cwd = path.resolve(__dirname, 'shell')
     const tests = [

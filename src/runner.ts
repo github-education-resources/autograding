@@ -18,6 +18,7 @@ export interface Test {
   readonly output?: string
   readonly timeout: number
   readonly points?: number
+  readonly extra?: boolean
   readonly comparison: TestComparison
 }
 
@@ -213,7 +214,9 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
     try {
       if (test.points) {
         hasPoints = true
-        availablePoints += test.points
+        if (!test.extra) {
+          availablePoints += test.points
+        }
       }
       log(color.cyan(`📝 ${test.name}`))
       log('')
@@ -225,7 +228,9 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
         points += test.points
       }
     } catch (error) {
-      failed = true
+      if (!test.extra) {
+        failed = true
+      }
       log('')
       log(color.red(`❌ ${test.name}`))
       core.setFailed(error.message)
@@ -243,6 +248,12 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
     log(color.green('All tests passed'))
     log('')
     log('✨🌟💖💎🦄💎💖🌟✨🌟💖💎🦄💎💖🌟✨')
+    log('')
+  }
+
+  if (points > availablePoints) {
+    const extraCreditPoints = points - availablePoints
+    log(`💪💪💪 You earned ${extraCreditPoints} extra credit points`)
     log('')
   }
 
