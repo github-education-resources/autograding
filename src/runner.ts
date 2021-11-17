@@ -104,6 +104,7 @@ const runSetup = async (test: Test, cwd: string, timeout: number): Promise<void>
     shell: true,
     env: {
       PATH: process.env['PATH'],
+      DOTNET_CLI_HOME: '/tmp',
       FORCE_COLOR: 'true',
     },
   })
@@ -130,6 +131,7 @@ const runCommand = async (test: Test, cwd: string, timeout: number): Promise<voi
     shell: true,
     env: {
       PATH: process.env['PATH'],
+      DOTNET_CLI_HOME: '/tmp',
       FORCE_COLOR: 'true',
     },
   })
