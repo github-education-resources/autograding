@@ -1,6 +1,6 @@
 name: Autograding
-description: "Autograding for GitHub Classroom"
-author: "@github"
+description: "Autograding for GitHub Classroom for .NET"
+author: "@mikkopa"
 inputs:
   token:
     description: >
