@@ -102,10 +102,6 @@ const runSetup = async (test: Test, cwd: string, timeout: number): Promise<void>
   const setup = spawn(test.setup, {
     cwd,
     shell: true,
-    env: {
-      PATH: process.env['PATH'],
-      FORCE_COLOR: 'true',
-    },
   })
 
   // Start with a single new line
@@ -128,10 +124,6 @@ const runCommand = async (test: Test, cwd: string, timeout: number): Promise<voi
   const child = spawn(test.run, {
     cwd,
     shell: true,
-    env: {
-      PATH: process.env['PATH'],
-      FORCE_COLOR: 'true',
-    },
   })
 
   let output = ''
