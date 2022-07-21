@@ -71,7 +71,7 @@ const waitForExit = async (child: ChildProcess, timeout: number): Promise<void> 
     const exitTimeout = setTimeout(() => {
       timedOut = true
       reject(new TestTimeoutError(`Setup timed out in ${timeout} milliseconds`))
-      kill(child.pid)
+      if (typeof child.pid === 'number') kill(child.pid)
     }, timeout)
 
     child.once('exit', (code: number, signal: string) => {
