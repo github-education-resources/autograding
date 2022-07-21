@@ -32,7 +32,7 @@
     "@vercel/ncc": "^0.34.0",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.15.0",
-    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-prettier": "^3.4.1",
     "jest": "^25.1.0",
     "nock": "^13.2.9",
     "prettier": "^2.7.1",
