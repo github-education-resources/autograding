@@ -228,7 +228,11 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
       failed = true
       log('')
       log(color.red(`❌ ${test.name}`))
-      core.setFailed(error.message)
+      if (error instanceof Error) {
+        core.setFailed(error.message)
+      } else {
+        core.setFailed(`Failed to run test '${test.name}'`)
+      }
     }
   }
 
