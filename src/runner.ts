@@ -112,12 +112,12 @@ const runSetup = async (test: Test, cwd: string, timeout: number): Promise<void>
   process.stdout.write(indent('\n'))
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setup.stdout.on('data', chunk => {
+  setup.stdout.on('data', (chunk) => {
     process.stdout.write(indent(chunk))
   })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setup.stderr.on('data', chunk => {
+  setup.stderr.on('data', (chunk) => {
     process.stderr.write(indent(chunk))
   })
 
@@ -139,12 +139,12 @@ const runCommand = async (test: Test, cwd: string, timeout: number): Promise<voi
   // Start with a single new line
   process.stdout.write(indent('\n'))
 
-  child.stdout.on('data', chunk => {
+  child.stdout.on('data', (chunk) => {
     process.stdout.write(indent(chunk))
     output += chunk
   })
 
-  child.stderr.on('data', chunk => {
+  child.stderr.on('data', (chunk) => {
     process.stderr.write(indent(chunk))
   })
 
