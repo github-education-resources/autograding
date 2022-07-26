@@ -3,7 +3,8 @@ name: CI
 on: [push]
 
 jobs:
-  build:
+  # run node unit tests
+  units:
     runs-on: ubuntu-latest
 
     strategy:
@@ -19,3 +20,17 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm test
+
+  # test action works running from the graph
+  integration:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 12
+      - run: npm ci
+      - run: npm run build
+
+      - uses: ./
