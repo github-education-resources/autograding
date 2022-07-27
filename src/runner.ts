@@ -291,15 +291,14 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
       ],
       ...summaryTableRows,
     ])
+    summary.addBreak()
 
     if (hasPoints) {
-      summary.addBreak()
-      summary.addRaw(`<p>Points ${points}/${availablePoints}</p>`)
+      summary.addRaw(`<p>Total Points: ${points}/${availablePoints}</p>`)
     }
 
-    summary.addBreak()
     if (failed) {
-      summary.addRaw(`<p>Some tests have failed.</p>`)
+      summary.addRaw(`<p>Some tests have failed. Check the action logs for more details.</p>`)
     } else {
       summary.addRaw(`<p>All tests passed. Well done.</p>`)
       summary.addRaw('✨🌟💖💎🦄💎💖🌟✨🌟💖💎🦄💎💖🌟✨')
