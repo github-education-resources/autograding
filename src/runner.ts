@@ -201,6 +201,11 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
   let availablePoints = 0
   let hasPoints = false
 
+  const stepSummary = core.getInput('step-summary').toLowerCase() === 'true' ? true : false
+  const summary = core.summary
+  const summaryTableRows = []
+  // if (stepSummary)
+
   // https://help.github.com/en/actions/reference/development-tools-for-github-actions#stop-and-start-log-commands-stop-commands
   const token = uuidv4()
   log('')
@@ -210,6 +215,8 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
   let failed = false
 
   for (const test of tests) {
+    const summaryTableRow = [] // [test name, result, points, message]
+
     try {
       if (test.points) {
         hasPoints = true
@@ -217,23 +224,37 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
       }
       log(color.cyan(`📝 ${test.name}`))
       log('')
+      if (stepSummary) summaryTableRow.push(`${test.name}`)
+
       await run(test, cwd)
+
       log('')
       log(color.green(`✅ ${test.name}`))
+      if (stepSummary) summaryTableRow.push(`Pass ✅`)
+
       log(``)
       if (test.points) {
         points += test.points
+        if (stepSummary) summaryTableRow.push(`${test.points}`)
       }
+      // TODO get test output and use for feedback message
+      if (stepSummary) summaryTableRow.push(``)
     } catch (error) {
       failed = true
       log('')
       log(color.red(`❌ ${test.name}`))
+      if (stepSummary) summaryTableRow.push(`Fail ❌`)
+      if (hasPoints && stepSummary) summaryTableRow.push(`0`)
+
       if (error instanceof Error) {
         core.setFailed(error.message)
+        if (stepSummary) summaryTableRow.push(`${error.message}`)
       } else {
         core.setFailed(`Failed to run test '${test.name}'`)
+        if (stepSummary) summaryTableRow.push(`Failed to run test '${test.name}'`)
       }
     }
+    if (stepSummary) summaryTableRows.push(summaryTableRow)
   }
 
   // Restart command processing
@@ -256,5 +277,21 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
     log(color.bold.bgCyan.black(text))
     core.setOutput('Points', `${points}/${availablePoints}`)
     await setCheckRunOutput(text)
+  }
+
+  // Set step summary
+  if (stepSummary) {
+    summary.addHeading(`Autograding Results`, 2)
+    summary.addTable([
+      [
+        {data: 'Test', header: true},
+        {data: 'Result', header: true},
+        ...(hasPoints ? [{data: 'Points', header: true}] : []),
+        {data: 'Message', header: true},
+      ],
+      ...summaryTableRows,
+    ])
+    summary.addRaw(`Points ${points}/${availablePoints}`)
+    await summary.write()
   }
 }
