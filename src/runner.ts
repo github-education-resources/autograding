@@ -230,7 +230,7 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
 
       log('')
       log(color.green(`✅ ${test.name}`))
-      if (stepSummary) summaryTableRow.push(`Pass ✅`)
+      if (stepSummary) summaryTableRow.push(`✅ Pass`)
 
       log(``)
       if (test.points) {
@@ -243,7 +243,7 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
       failed = true
       log('')
       log(color.red(`❌ ${test.name}`))
-      if (stepSummary) summaryTableRow.push(`Fail ❌`)
+      if (stepSummary) summaryTableRow.push(`❌ Fail`)
       if (hasPoints && stepSummary) summaryTableRow.push(`0`)
 
       if (error instanceof Error) {
