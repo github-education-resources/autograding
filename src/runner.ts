@@ -248,7 +248,7 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
 
       if (error instanceof Error) {
         core.setFailed(error.message)
-        if (stepSummary) summaryTableRow.push(`${error.message}`)
+        if (stepSummary) summaryTableRow.push(`<code>${error.message}</code>`)
       } else {
         core.setFailed(`Failed to run test '${test.name}'`)
         if (stepSummary) summaryTableRow.push(`Failed to run test '${test.name}'`)
