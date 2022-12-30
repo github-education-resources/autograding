@@ -1,5 +1,5 @@
 import {spawn, ChildProcess} from 'child_process'
-import kill from 'tree-kill'
+//import kill from 'tree-kill'
 import {v4 as uuidv4} from 'uuid'
 import * as core from '@actions/core'
 import {setCheckRunOutput} from './output'
@@ -71,7 +71,8 @@ const waitForExit = async (child: ChildProcess, timeout: number): Promise<void> 
     const exitTimeout = setTimeout(() => {
       timedOut = true
       reject(new TestTimeoutError(`Setup timed out in ${timeout} milliseconds`))
-      kill(child.pid)
+      //kill(child.pid)
+      child.kill()
     }, timeout)
 
     child.once('exit', (code: number, signal: string) => {
@@ -228,7 +229,9 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
       failed = true
       log('')
       log(color.red(`❌ ${test.name}`))
-      core.setFailed(error.message)
+      if (error instanceof Error) {
+        core.setFailed(error.message)
+      }
     }
   }
 
