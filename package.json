@@ -23,7 +23,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^29.2.6",
+    "@types/jest": "^29.5.1",
     "@types/node": "^18.11.18",
     "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
