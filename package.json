@@ -17,8 +17,8 @@
   "author": "GitHub",
   "license": "ISC",
   "dependencies": {
-    "@actions/core": "^1.2.2",
-    "@actions/github": "^2.1.1",
+    "@actions/core": "^1.10.0",
+    "@actions/github": "^2.2.0",
     "tree-kill": "^1.2.2",
     "uuid": "^7.0.1"
   },

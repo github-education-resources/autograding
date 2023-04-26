@@ -1,0 +1,20 @@
+# Checkout the release branch
+git checkout releases/v1
+# Get this branch even with master so the latest changes are included
+git reset --hard master
+# Rerun the checks and rebuild the TypeScript and ncc distribution
+npm run build
+# Add the dist
+git add .
+# Commit
+git commit -m "v1"
+# Force push to overwrite any previous commits for this branch
+git push -f origin releases/v1
+# Remove previously pushed tags (v1 will be unusable momentarily until you re-push)
+git push origin :refs/tags/v1
+# Re-apply the tag
+git tag -fa v1 -m "v1"
+# Push everything
+git push origin v1
+# Checkout master again
+git checkout master
