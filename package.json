@@ -1,6 +1,6 @@
 {
   "name": "autograding",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "A set of actions for autograding assignments with GitHub Classroom. Supports .NET",
   "main": "dist/index.js",
   "scripts": {
