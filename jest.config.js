@@ -11,7 +11,7 @@ process.stdout.write = (str, encoding, cb) => {
 
 const processStderrWrite = process.stderr.write.bind(process.stderr)
 process.stderr.write = (str, encoding, cb) => {
-  if (str.match(/Hello/)) return false
+  if (str.toString().match(/Hello/)) return false
   processStderrWrite(str, encoding, cb)
 }
 
