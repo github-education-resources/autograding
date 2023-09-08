@@ -16,7 +16,11 @@ const run = async (): Promise<void> => {
     await runAll(json.tests as Array<Test>, cwd)
   } catch (error) {
     // If there is any error we'll fail the action with the error message
-    console.error(error.message)
+    if (error instanceof Error) {
+      core.setFailed(error.message)
+    } else {
+      core.setFailed(`An unknown error occurred`)
+    }
     core.setFailed(`Autograding failure: ${error}`)
   }
 }
