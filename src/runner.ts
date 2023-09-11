@@ -71,7 +71,7 @@ const waitForExit = async (child: ChildProcess, timeout: number): Promise<void> 
     const exitTimeout = setTimeout(() => {
       timedOut = true
       reject(new TestTimeoutError(`Setup timed out in ${timeout} milliseconds`))
-      kill(child.pid)
+      if (typeof child.pid === 'number') kill(child.pid)
     }, timeout)
 
     child.once('exit', (code: number, signal: string) => {
@@ -112,12 +112,12 @@ const runSetup = async (test: Test, cwd: string, timeout: number): Promise<void>
   process.stdout.write(indent('\n'))
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setup.stdout.on('data', chunk => {
+  setup.stdout.on('data', (chunk) => {
     process.stdout.write(indent(chunk))
   })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setup.stderr.on('data', chunk => {
+  setup.stderr.on('data', (chunk) => {
     process.stderr.write(indent(chunk))
   })
 
@@ -139,12 +139,12 @@ const runCommand = async (test: Test, cwd: string, timeout: number): Promise<voi
   // Start with a single new line
   process.stdout.write(indent('\n'))
 
-  child.stdout.on('data', chunk => {
+  child.stdout.on('data', (chunk) => {
     process.stdout.write(indent(chunk))
     output += chunk
   })
 
-  child.stderr.on('data', chunk => {
+  child.stderr.on('data', (chunk) => {
     process.stderr.write(indent(chunk))
   })
 
@@ -228,7 +228,11 @@ export const runAll = async (tests: Array<Test>, cwd: string): Promise<void> => 
       failed = true
       log('')
       log(color.red(`❌ ${test.name}`))
-      core.setFailed(error.message)
+      if (error instanceof Error) {
+        core.setFailed(error.message)
+      } else {
+        core.setFailed(`Failed to run test '${test.name}'`)
+      }
     }
   }
 
