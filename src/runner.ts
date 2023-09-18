@@ -107,7 +107,7 @@ const runSetup = async (test: Test, cwd: string, timeout: number): Promise<void>
       FORCE_COLOR: 'true',
       DOTNET_CLI_HOME: '/tmp',
       DOTNET_NOLOGO: 'true',
-      HOME: process.env['HOME']
+      HOME: process.env['HOME'],
     },
   })
 
@@ -136,7 +136,7 @@ const runCommand = async (test: Test, cwd: string, timeout: number): Promise<voi
       FORCE_COLOR: 'true',
       DOTNET_CLI_HOME: '/tmp',
       DOTNET_NOLOGO: 'true',
-      HOME: process.env['HOME']
+      HOME: process.env['HOME'],
     },
   })
 
