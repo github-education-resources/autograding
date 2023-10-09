@@ -1,6 +1,6 @@
 ## Autograding
 
-GitHub Classroom Autograding is a GitHub Action that classroom admins/educators can use to automate the grading of student assignments.
+GitHub Classroom Autograding is a GitHub Action that classroom admins can use to automate the grading of student assignments.
 
 ## Background
 
