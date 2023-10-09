@@ -5,7 +5,7 @@ GitHub Classroom Autograding is a GitHub Action that classroom admins can use to
 ## Background
 
 - **This project does not currently have a roadmap**
-- If you would like to add additional features, please read our [contribution guidelines](./CONTRIBUTING.md)
+- If you would like to add additional features, please read our [contribution guidelines](CONTRIBUTING.MD)
 - To report a security vulnerability, please read our [security guidelines](./SECURITY.md)
 
 ## License
