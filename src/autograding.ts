@@ -12,6 +12,7 @@ const run = async (): Promise<void> => {
 
     // if points inputs are present, set the output and call checkRun
     if (points && availablePoints) {
+      core.info(`Using direct input points.`)
       const text = `Points ${points}/${availablePoints}`
       core.setOutput('Points', `${points}/${availablePoints}`)
       await setCheckRunOutput(text)
