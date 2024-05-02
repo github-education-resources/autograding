@@ -1,3 +1,8 @@
+## Repo Archived
+
+NOTE: This Action is no longer used for Autograding tests created via the GitHub Classroom GUI. See our [docs on Autograding](https://docs.github.com/en/education/manage-coursework-with-github-classroom/teach-with-github-classroom/use-autograding#grading-methods) for more information
+
+
 ## Autograding
 
 GitHub Classroom Autograding is a GitHub Action that classroom admins can use to automate the grading of student assignments.
