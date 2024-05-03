@@ -10,5 +10,5 @@ inputs:
       Note that the token will be accessible to all repository collaborators.
     default: ${{ github.token }}
 runs:
-  using: "node16"
+  using: "node20"
   main: "./dist/index.js"
