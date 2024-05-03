@@ -2,9 +2,24 @@ import * as core from '@actions/core'
 import fs from 'fs'
 import path from 'path'
 import {Test, runAll} from './runner'
+import {setCheckRunOutput} from './output'
 
 const run = async (): Promise<void> => {
   try {
+    // try to get points inputs
+    const points = core.getInput('points')
+    const availablePoints = core.getInput('available-points')
+
+    // if points inputs are present, set the output and call checkRun
+    if (points && availablePoints) {
+      core.info(`Using direct input points.`)
+      const text = `Points ${points}/${availablePoints}`
+      core.setOutput('Points', `${points}/${availablePoints}`)
+      await setCheckRunOutput(text)
+      return
+    }
+
+    // Otherwise, try to run the tests
     const cwd = process.env['GITHUB_WORKSPACE']
     if (!cwd) {
       throw new Error('No GITHUB_WORKSPACE')

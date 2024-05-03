@@ -33,4 +33,11 @@ jobs:
       - run: npm ci
       - run: npm run build
 
+      # run the action from the local path
       - uses: ./
+
+      # run the local action with point inputs
+      - uses: ./
+        with:
+          points: 10
+          available-points: 20
