@@ -18,7 +18,7 @@
   "license": "ISC",
   "dependencies": {
     "@actions/core": "^1.10.1",
-    "@actions/github": "^5.1.1",
+    "@actions/github": "^6.0.0",
     "chalk": "^4.1.2",
     "tree-kill": "^1.2.2",
     "uuid": "^9.0.1"
